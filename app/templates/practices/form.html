@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} practice</h1>
+<form method="post">
+  <label>Treatment<select name="treatment_id" required>{% for t in treatments %}<option value="{{ t.id }}" {% if item and item.treatment_id == t.id %}selected{% endif %}>{{ t.experiment.project.project_code }} / {{ t.experiment.experiment_code }} / {{ t.treatment_code }} / {{ t.name }}</option>{% endfor %}</select></label>
+  <div class="grid">
+    <label>Practice type<input name="practice_type" value="{{ item.practice_type if item else '' }}" required></label>
+    <label>Practice name<input name="practice_name" value="{{ item.practice_name if item else '' }}" required></label>
+  </div>
+  <div class="grid">
+    <label>Practice value<input name="practice_value" value="{{ item.practice_value if item else '' }}"></label>
+    <label>Unit<input name="unit" value="{{ item.unit if item else '' }}"></label>
+  </div>
+  <label>Description<textarea name="description">{{ item.description if item else '' }}</textarea></label>
+  <button type="submit">Save</button><a href="/practices" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

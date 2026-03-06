@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<header class="page-header"><h1>Samples</h1><p class="muted">A sample is the header record. Each sample can have many indicator measurements.</p></header>
+<div class="toolbar"><form method="get"><input name="q" value="{{ q }}" placeholder="Search samples..."><button type="submit">Search</button></form><a href="/samples/new" role="button">Add new</a></div>
+<div class="table-wrap"><table><thead><tr><th>Project</th><th>Experiment</th><th>Plot</th><th>Sample ID</th><th>Layer</th><th>Date</th><th>Actions</th></tr></thead><tbody>{% for item in items %}<tr><td>{{ item.experiment.project.project_code }}</td><td>{{ item.experiment.experiment_code }}</td><td>{{ item.plot.plot_code if item.plot else '' }}</td><td>{{ item.sample_id }}</td><td>{{ item.layer_id }}</td><td>{{ item.sampling_date }}</td><td class="actions"><a href="/samples/{{ item.id }}/edit" role="button" class="secondary secondary-btn">Edit</a><form class="inline-form" method="post" action="/samples/{{ item.id }}/delete"><button class="danger-btn">Delete</button></form></td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

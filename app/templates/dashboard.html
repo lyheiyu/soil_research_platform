@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<header class="page-header">
+  <h1>Dashboard</h1>
+  <p class="muted">Project-aware platform demo. Experiment IDs are only unique within a project.</p>
+</header>
+<section class="card-grid">
+  {% for k, v in stats.items() %}
+  <article class="stat-card">
+    <small class="muted">{{ k|replace('_', ' ')|title }}</small>
+    <h3>{{ v }}</h3>
+  </article>
+  {% endfor %}
+</section>
+<article>
+  <h3>Recent samples</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Project</th><th>Experiment</th><th>Plot</th><th>Sample</th><th>Layer</th><th>Date</th></tr></thead>
+      <tbody>
+      {% for s in recent_samples %}
+        <tr>
+          <td>{{ s.experiment.project.project_code }}</td>
+          <td>{{ s.experiment.experiment_code }}</td>
+          <td>{{ s.plot.plot_code if s.plot else '' }}</td>
+          <td>{{ s.sample_id }}</td>
+          <td>{{ s.layer_id }}</td>
+          <td>{{ s.sampling_date }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}

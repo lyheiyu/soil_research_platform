@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} experiment</h1>
+<form method="post">
+  <label>Project<select name="project_id" required>{% for p in projects %}<option value="{{ p.id }}" {% if item and item.project_id == p.id %}selected{% endif %}>{{ p.project_code }}</option>{% endfor %}</select></label>
+  <div class="grid">
+    <label>Experiment code<input name="experiment_code" value="{{ item.experiment_code if item else '' }}" required></label>
+    <label>Field name<input name="field_name" value="{{ item.field_name if item else '' }}"></label>
+  </div>
+  <label>Title<input name="title" value="{{ item.title if item else '' }}" required></label>
+  <div class="grid">
+    <label>Start date<input type="date" name="start_date" value="{{ item.start_date if item and item.start_date else '' }}"></label>
+    <label>Expected end date<input type="date" name="expected_end_date" value="{{ item.expected_end_date if item and item.expected_end_date else '' }}"></label>
+  </div>
+  <button type="submit">Save</button><a href="/experiments" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

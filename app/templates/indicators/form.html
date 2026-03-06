@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} indicator</h1>
+<form method="post">
+  <div class="grid">
+    <label>Indicator code<input name="indicator_code" value="{{ item.indicator_code if item else '' }}" required></label>
+    <label>Value type<input name="value_type" value="{{ item.value_type if item else '' }}" required></label>
+  </div>
+  <label>Indicator name<input name="indicator_name" value="{{ item.indicator_name if item else '' }}" required></label>
+  <div class="grid">
+    <label>Default unit<input name="default_unit" value="{{ item.default_unit if item else '' }}"></label>
+    <label>Category<input name="category" value="{{ item.category if item else '' }}"></label>
+  </div>
+  <label>Description<textarea name="description">{{ item.description if item else '' }}</textarea></label>
+  <button type="submit">Save</button><a href="/indicators" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

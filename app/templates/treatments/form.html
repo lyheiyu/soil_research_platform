@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} treatment</h1>
+<form method="post">
+  <label>Experiment<select name="experiment_id" required>{% for e in experiments %}<option value="{{ e.id }}" {% if item and item.experiment_id == e.id %}selected{% endif %}>{{ e.project.project_code }} / {{ e.experiment_code }} / {{ e.title }}</option>{% endfor %}</select></label>
+  <div class="grid">
+    <label>Treatment code<input name="treatment_code" value="{{ item.treatment_code if item else '' }}" required></label>
+    <label>Treatment type<input name="treatment_type" value="{{ item.treatment_type if item else '' }}"></label>
+  </div>
+  <label>Name<input name="name" value="{{ item.name if item else '' }}" required></label>
+  <label>Description<textarea name="description">{{ item.description if item else '' }}</textarea></label>
+  <label><input type="checkbox" name="is_control" {% if item and item.is_control %}checked{% endif %}> Is control treatment</label>
+  <button type="submit">Save</button><a href="/treatments" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

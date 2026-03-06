@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title or 'Soil Monitoring Platform' }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>Soil Monitoring Platform</strong></li></ul>
+    <ul>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/projects">Projects</a></li>
+      <li><a href="/experiments">Experiments</a></li>
+      <li><a href="/treatments">Treatments</a></li>
+      <li><a href="/practices">Practices</a></li>
+      <li><a href="/plots">Plots</a></li>
+      <li><a href="/indicators">Indicators</a></li>
+      <li><a href="/samples">Samples</a></li>
+      <li><a href="/measurements">Measurements</a></li>
+      <li><a href="/query">Query</a></li>
+      <li><a href="/docs">Docs</a></li>
+    </ul>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

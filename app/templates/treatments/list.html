@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<header class="page-header"><h1>Treatments</h1><p class="muted">Treatments are linked to project-specific experiments.</p></header>
+<div class="toolbar">
+  <form method="get">
+    <input name="q" value="{{ q }}" placeholder="Search treatments...">
+    <select name="project_id"><option value="">All projects</option>{% for p in projects %}<option value="{{ p.id }}" {% if selected_project_id == p.id %}selected{% endif %}>{{ p.project_code }}</option>{% endfor %}</select>
+    <select name="experiment_id"><option value="">All experiments</option>{% for e in experiments %}<option value="{{ e.id }}" {% if selected_experiment_id == e.id %}selected{% endif %}>{{ e.project.project_code }} / {{ e.experiment_code }}</option>{% endfor %}</select>
+    <button type="submit">Search</button>
+  </form>
+  <a href="/treatments/new" role="button">Add new</a>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Project</th><th>Experiment</th><th>Code</th><th>Name</th><th>Type</th><th>Actions</th></tr></thead><tbody>{% for item in items %}<tr><td>{{ item.experiment.project.project_code }}</td><td>{{ item.experiment.experiment_code }}</td><td>{{ item.treatment_code }} {% if item.is_control %}<span class="badge">Control</span>{% endif %}</td><td>{{ item.name }}</td><td>{{ item.treatment_type }}</td><td class="actions"><a href="/treatments/{{ item.id }}/edit" role="button" class="secondary secondary-btn">Edit</a><form class="inline-form" method="post" action="/treatments/{{ item.id }}/delete"><button class="danger-btn">Delete</button></form></td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

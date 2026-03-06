@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} project</h1>
+<form method="post">
+  <div class="grid">
+    <label>Country code<input name="country_code" value="{{ item.country_code if item else '' }}" required></label>
+    <label>Round no<input type="number" name="round_no" value="{{ item.round_no if item else 1 }}" required></label>
+    <label>Approval no<input type="number" name="approval_no" value="{{ item.approval_no if item else 1 }}" required></label>
+  </div>
+  <label>Project code<input name="project_code" value="{{ item.project_code if item else '' }}" required></label>
+  <label>Title<input name="title" value="{{ item.title if item else '' }}" required></label>
+  <label>Description<textarea name="description">{{ item.description if item else '' }}</textarea></label>
+  <button type="submit">Save</button>
+  <a href="/projects" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

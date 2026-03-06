@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} plot</h1>
+<form method="post">
+  <label>Experiment<select name="experiment_id" required>{% for e in experiments %}<option value="{{ e.id }}" {% if item and item.experiment_id == e.id %}selected{% endif %}>{{ e.project.project_code }} / {{ e.experiment_code }}</option>{% endfor %}</select></label>
+  <label>Treatment<select name="treatment_id"><option value="">No treatment</option>{% for t in treatments %}<option value="{{ t.id }}" {% if item and item.treatment_id == t.id %}selected{% endif %}>{{ t.experiment.project.project_code }} / {{ t.experiment.experiment_code }} / {{ t.treatment_code }}</option>{% endfor %}</select></label>
+  <div class="grid">
+    <label>Plot code<input name="plot_code" value="{{ item.plot_code if item else '' }}" required></label>
+    <label>Sample point<input name="sample_point" value="{{ item.sample_point if item else '' }}"></label>
+  </div>
+  <div class="grid">
+    <label>Replicate no<input type="number" name="replicate_no" value="{{ item.replicate_no if item and item.replicate_no is not none else '' }}"></label>
+    <label>Block no<input type="number" name="block_no" value="{{ item.block_no if item and item.block_no is not none else '' }}"></label>
+  </div>
+  <button type="submit">Save</button><a href="/plots" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

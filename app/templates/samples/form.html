@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} sample</h1>
+<form method="post">
+  <label>Experiment<select name="experiment_id" required>{% for e in experiments %}<option value="{{ e.id }}" {% if item and item.experiment_id == e.id %}selected{% endif %}>{{ e.project.project_code }} / {{ e.experiment_code }}</option>{% endfor %}</select></label>
+  <label>Plot<select name="plot_id"><option value="">No plot</option>{% for p in plots %}<option value="{{ p.id }}" {% if item and item.plot_id == p.id %}selected{% endif %}>{{ p.experiment.project.project_code }} / {{ p.experiment.experiment_code }} / {{ p.plot_code }}</option>{% endfor %}</select></label>
+  <label>Sample ID<input name="sample_id" value="{{ item.sample_id if item else '' }}" required></label>
+  <div class="grid">
+    <label>Layer<input name="layer_id" value="{{ item.layer_id if item else '' }}"></label>
+    <label>Sampling date<input type="date" name="sampling_date" value="{{ item.sampling_date if item and item.sampling_date else '' }}"></label>
+  </div>
+  <label>Author<input name="author" value="{{ item.author if item else '' }}"></label>
+  <button type="submit">Save</button><a href="/samples" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

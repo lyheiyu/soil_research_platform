@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<header class="page-header"><h1>Experiments</h1><p class="muted">Experiment codes can repeat across different projects.</p></header>
+<div class="toolbar">
+  <form method="get">
+    <input name="q" value="{{ q }}" placeholder="Search experiments...">
+    <select name="project_id"><option value="">All projects</option>{% for p in projects %}<option value="{{ p.id }}" {% if selected_project_id == p.id %}selected{% endif %}>{{ p.project_code }}</option>{% endfor %}</select>
+    <button type="submit">Search</button>
+  </form>
+  <a href="/experiments/new" role="button">Add new</a>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Project</th><th>Experiment</th><th>Title</th><th>Field</th><th>Actions</th></tr></thead><tbody>{% for item in items %}<tr><td>{{ item.project.project_code }}</td><td>{{ item.experiment_code }}</td><td>{{ item.title }}</td><td>{{ item.field_name }}</td><td class="actions"><a href="/experiments/{{ item.id }}/edit" role="button" class="secondary secondary-btn">Edit</a><form class="inline-form" method="post" action="/experiments/{{ item.id }}/delete"><button class="danger-btn">Delete</button></form></td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

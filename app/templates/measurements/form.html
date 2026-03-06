@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ 'Edit' if item else 'New' }} measurement</h1>
+<form method="post">
+  <label>Sample<select name="sample_id_fk" required>{% for s in samples %}<option value="{{ s.id }}" {% if item and item.sample_id_fk == s.id %}selected{% endif %}>{{ s.experiment.project.project_code }} / {{ s.experiment.experiment_code }} / {{ s.sample_id }}{% if s.plot %} / {{ s.plot.plot_code }}{% endif %}</option>{% endfor %}</select></label>
+  <label>Indicator<select name="indicator_id" required>{% for i in indicators %}<option value="{{ i.id }}" {% if item and item.indicator_id == i.id %}selected{% endif %}>{{ i.indicator_code }} / {{ i.indicator_name }}</option>{% endfor %}</select></label>
+  <div class="grid">
+    <label>Numeric value<input name="measured_value_num" value="{{ item.measured_value_num if item and item.measured_value_num is not none else '' }}"></label>
+    <label>Text value<input name="measured_value_text" value="{{ item.measured_value_text if item else '' }}"></label>
+  </div>
+  <div class="grid">
+    <label>Unit<input name="unit" value="{{ item.unit if item else '' }}"></label>
+    <label>QA status<input name="qa_status" value="{{ item.qa_status if item else 'raw' }}"></label>
+  </div>
+  <button type="submit">Save</button><a href="/measurements" role="button" class="secondary secondary-btn">Cancel</a>
+</form>
+{% endblock %}

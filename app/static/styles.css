@@ -1,0 +1,15 @@
+body { background: #0f172a; }
+main.container { padding-bottom: 3rem; }
+.card-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin:1rem 0 2rem; }
+.stat-card { background:#fff; border:1px solid #dfe7f3; border-radius:16px; padding:1rem; }
+.stat-card h3 { margin:0; font-size:1.8rem; }
+.muted { color:#61708a; }
+.toolbar { display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap; margin:1rem 0; }
+.toolbar form { display:flex; gap:.75rem; flex-wrap:wrap; align-items:end; }
+.actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+.badge { background:#eef2ff; color:#3654d8; padding:.15rem .5rem; border-radius:999px; font-size:.8rem; }
+.inline-form { display:inline; margin:0; }
+.table-wrap { overflow-x:auto; }
+header.page-header { margin-top: 1rem; }
+.secondary-btn { background:#e9eef9; border:none; color:#203250; }
+.danger-btn { background:#e53935; border:none; }
