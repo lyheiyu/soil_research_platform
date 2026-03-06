@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="cards-grid">
+  <div class="stat-card"><span>Experiments</span><strong>{{ stats.experiments }}</strong></div>
+  <div class="stat-card"><span>Sites</span><strong>{{ stats.sites }}</strong></div>
+  <div class="stat-card"><span>Treatments</span><strong>{{ stats.treatments }}</strong></div>
+  <div class="stat-card"><span>Plots</span><strong>{{ stats.plots }}</strong></div>
+  <div class="stat-card"><span>Samples</span><strong>{{ stats.samples }}</strong></div>
+  <div class="stat-card"><span>Indicators</span><strong>{{ stats.indicators }}</strong></div>
+  <div class="stat-card"><span>Measurements</span><strong>{{ stats.measurements }}</strong></div>
+</div>
+
+<div class="panel">
+  <h2>Platform logic</h2>
+  <p><strong>Experiment → Site → Treatment → Plot → Sampling Event → Measurement</strong></p>
+  <p>This demo shows how treatments and practices are attached to an experiment and then implemented on field plots for monitoring.</p>
+</div>
+
+<div class="panel">
+  <h2>Recent samples</h2>
+  <table>
+    <thead>
+      <tr><th>Sample ID</th><th>Layer</th><th>Date</th><th>Timepoint</th><th>Author</th></tr>
+    </thead>
+    <tbody>
+      {% for sample in recent_samples %}
+      <tr>
+        <td>{{ sample.sample_id }}</td>
+        <td>{{ sample.layer_id or '-' }}</td>
+        <td>{{ sample.sampling_date or '-' }}</td>
+        <td>{{ sample.sampling_timepoint or '-' }}</td>
+        <td>{{ sample.author or '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

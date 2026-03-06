@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="panel">
+  <table>
+    <thead>
+      <tr><th>Site</th><th>Field</th><th>Experiment</th><th>Texture</th><th>Area (ha)</th><th>Coordinates</th><th>Plots</th></tr>
+    </thead>
+    <tbody>
+      {% for site in sites %}
+      <tr>
+        <td>{{ site.site_code }}</td>
+        <td>{{ site.field_identifier }}</td>
+        <td>{{ site.experiment.experiment_code }}</td>
+        <td>{{ site.soil_type_texture or '-' }}</td>
+        <td>{{ site.field_size_ha or '-' }}</td>
+        <td>{{ site.gps_lat }}, {{ site.gps_lon }}</td>
+        <td>{{ site.plots|length }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

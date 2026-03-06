@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="panel">
+  <table>
+    <thead>
+      <tr><th>Project</th><th>Experiment</th><th>Title</th><th>Start</th><th>Expected End</th><th>Sites</th><th>Treatments</th></tr>
+    </thead>
+    <tbody>
+      {% for exp in experiments %}
+      <tr>
+        <td>{{ exp.project_id }}</td>
+        <td>{{ exp.experiment_code }}</td>
+        <td>{{ exp.title }}</td>
+        <td>{{ exp.start_date or '-' }}</td>
+        <td>{{ exp.expected_end_date or '-' }}</td>
+        <td>{{ exp.sites|length }}</td>
+        <td>{{ exp.treatments|length }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

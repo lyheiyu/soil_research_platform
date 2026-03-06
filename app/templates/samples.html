@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="panel">
+  <table>
+    <thead>
+      <tr><th>Sample ID</th><th>Site</th><th>Plot</th><th>Treatment</th><th>Layer</th><th>Date</th><th>Timepoint</th><th>Author</th></tr>
+    </thead>
+    <tbody>
+      {% for s in samples %}
+      <tr>
+        <td>{{ s.sample_id }}</td>
+        <td>{{ s.site.site_code }}</td>
+        <td>{{ s.plot.plot_code if s.plot else '-' }}</td>
+        <td>{{ s.plot.treatment.treatment_code if s.plot and s.plot.treatment else '-' }}</td>
+        <td>{{ s.layer_id or '-' }}</td>
+        <td>{{ s.sampling_date or '-' }}</td>
+        <td>{{ s.sampling_timepoint or '-' }}</td>
+        <td>{{ s.author or '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

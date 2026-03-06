@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="panel">
+  <table>
+    <thead>
+      <tr><th>Sample</th><th>Plot</th><th>Treatment</th><th>Indicator</th><th>Value</th><th>Unit</th><th>Domain</th><th>QA</th></tr>
+    </thead>
+    <tbody>
+      {% for m in measurements %}
+      <tr>
+        <td>{{ m.sampling_event.sample_id }}</td>
+        <td>{{ m.sampling_event.plot.plot_code if m.sampling_event.plot else '-' }}</td>
+        <td>{{ m.sampling_event.plot.treatment.treatment_code if m.sampling_event.plot and m.sampling_event.plot.treatment else '-' }}</td>
+        <td>{{ m.indicator.indicator_code }} - {{ m.indicator.indicator_name }}</td>
+        <td>{{ m.measured_value_num if m.measured_value_num is not none else m.measured_value_text }}</td>
+        <td>{{ m.unit or m.indicator.default_unit or '-' }}</td>
+        <td>{{ m.result_domain or '-' }}</td>
+        <td>{{ m.qa_status or '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
