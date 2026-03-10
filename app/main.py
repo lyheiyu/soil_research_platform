@@ -358,20 +358,65 @@ def list_plots(request: Request, q: str = '', db: Session = Depends(get_db)):
     return templates.TemplateResponse('plots/list.html', {'request': request, 'items': items, 'q': q})
 
 
-@app.get('/plots/new', response_class=HTMLResponse)
-def new_plot_form(request: Request, db: Session = Depends(get_db)):
-    experiments = db.query(Experiment).options(joinedload(Experiment.project)).order_by(Experiment.experiment_code).all()
-    treatments = db.query(Treatment).options(joinedload(Treatment.experiment).joinedload(Experiment.project)).order_by(Treatment.treatment_code).all()
-    return templates.TemplateResponse('plots/form.html', {'request': request, 'item': None, 'experiments': experiments, 'treatments': treatments})
+# @app.get('/plots/new', response_class=HTMLResponse)
+# def new_plot_form(request: Request, db: Session = Depends(get_db)):
+#     experiments = db.query(Experiment).options(joinedload(Experiment.project)).order_by(Experiment.experiment_code).all()
+#     treatments = db.query(Treatment).options(joinedload(Treatment.experiment).joinedload(Experiment.project)).order_by(Treatment.treatment_code).all()
+#     return templates.TemplateResponse('plots/form.html', {'request': request, 'item': None, 'experiments': experiments, 'treatments': treatments})
+@app.get('/plots', response_class=HTMLResponse)
+def list_plots(request: Request, q: str = '', db: Session = Depends(get_db)):
+    query = (
+        db.query(Plot)
+        .join(Plot.experiment)
+        .join(Experiment.project)
+        .outerjoin(Plot.treatment)
+        .options(
+            joinedload(Plot.experiment).joinedload(Experiment.project),
+            joinedload(Plot.treatment)
+        )
+    )
+    if q:
+        query = query.filter(
+            or_(
+                Plot.plot_code.ilike(f'%{q}%'),
+                Experiment.experiment_code.ilike(f'%{q}%'),
+                Project.project_code.ilike(f'%{q}%'),
+                Treatment.treatment_code.ilike(f'%{q}%')
+            )
+        )
+    items = query.order_by(Project.project_code, Experiment.experiment_code, Plot.plot_code).all()
+    return templates.TemplateResponse('plots/list.html', {'request': request, 'items': items, 'q': q})
 
+# @app.post('/plots/new')
+# def create_plot(experiment_id: int = Form(...), treatment_id: int | None = Form(None), plot_code: str = Form(...), replicate_no: int | None = Form(None), block_no: int | None = Form(None), sample_point: str = Form(''), db: Session = Depends(get_db)):
+#     db.add(Plot(experiment_id=experiment_id, treatment_id=treatment_id, plot_code=plot_code, replicate_no=replicate_no, block_no=block_no, sample_point=sample_point))
+#     db.commit()
+#     return redirect('/plots')
 
 @app.post('/plots/new')
-def create_plot(experiment_id: int = Form(...), treatment_id: int | None = Form(None), plot_code: str = Form(...), replicate_no: int | None = Form(None), block_no: int | None = Form(None), sample_point: str = Form(''), db: Session = Depends(get_db)):
-    db.add(Plot(experiment_id=experiment_id, treatment_id=treatment_id, plot_code=plot_code, replicate_no=replicate_no, block_no=block_no, sample_point=sample_point))
+def create_plot(
+    experiment_id: int = Form(...),
+    treatment_id: int | None = Form(None),
+    plot_code: str = Form(...),
+    replicate_no: int | None = Form(None),
+    sample_point: str = Form(''),
+    gps_lat: float | None = Form(None),
+    gps_lon: float | None = Form(None),
+    db: Session = Depends(get_db)
+):
+    db.add(
+        Plot(
+            experiment_id=experiment_id,
+            treatment_id=treatment_id,
+            plot_code=plot_code,
+            replicate_no=replicate_no,
+            sample_point=sample_point,
+            gps_lat=gps_lat,
+            gps_lon=gps_lon
+        )
+    )
     db.commit()
     return redirect('/plots')
-
-
 @app.get('/plots/{item_id}/edit', response_class=HTMLResponse)
 def edit_plot_form(item_id: int, request: Request, db: Session = Depends(get_db)):
     item = db.get(Plot, item_id)
@@ -380,18 +425,39 @@ def edit_plot_form(item_id: int, request: Request, db: Session = Depends(get_db)
     return templates.TemplateResponse('plots/form.html', {'request': request, 'item': item, 'experiments': experiments, 'treatments': treatments})
 
 
+# @app.post('/plots/{item_id}/edit')
+# def update_plot(item_id: int, experiment_id: int = Form(...), treatment_id: int | None = Form(None), plot_code: str = Form(...), replicate_no: int | None = Form(None), block_no: int | None = Form(None), sample_point: str = Form(''), db: Session = Depends(get_db)):
+#     item = db.get(Plot, item_id)
+#     item.experiment_id = experiment_id
+#     item.treatment_id = treatment_id
+#     item.plot_code = plot_code
+#     item.replicate_no = replicate_no
+#     item.block_no = block_no
+#     item.sample_point = sample_point
+#     db.commit()
+#     return redirect('/plots')
 @app.post('/plots/{item_id}/edit')
-def update_plot(item_id: int, experiment_id: int = Form(...), treatment_id: int | None = Form(None), plot_code: str = Form(...), replicate_no: int | None = Form(None), block_no: int | None = Form(None), sample_point: str = Form(''), db: Session = Depends(get_db)):
+def update_plot(
+    item_id: int,
+    experiment_id: int = Form(...),
+    treatment_id: int | None = Form(None),
+    plot_code: str = Form(...),
+    replicate_no: int | None = Form(None),
+    sample_point: str = Form(''),
+    gps_lat: float | None = Form(None),
+    gps_lon: float | None = Form(None),
+    db: Session = Depends(get_db)
+):
     item = db.get(Plot, item_id)
     item.experiment_id = experiment_id
     item.treatment_id = treatment_id
     item.plot_code = plot_code
     item.replicate_no = replicate_no
-    item.block_no = block_no
     item.sample_point = sample_point
+    item.gps_lat = gps_lat
+    item.gps_lon = gps_lon
     db.commit()
     return redirect('/plots')
-
 
 @app.post('/plots/{item_id}/delete')
 def delete_plot(item_id: int, db: Session = Depends(get_db)):
@@ -453,10 +519,29 @@ def delete_indicator(item_id: int, db: Session = Depends(get_db)):
 # Samples
 @app.get('/samples', response_class=HTMLResponse)
 def list_samples(request: Request, q: str = '', db: Session = Depends(get_db)):
-    query = db.query(Sample).options(joinedload(Sample.experiment).joinedload(Experiment.project), joinedload(Sample.plot))
+    query = (
+        db.query(Sample)
+        .join(Sample.experiment)
+        .join(Experiment.project)
+        .outerjoin(Sample.plot)
+        .options(
+            joinedload(Sample.experiment).joinedload(Experiment.project),
+            joinedload(Sample.plot)
+        )
+    )
     if q:
-        query = query.join(Experiment).join(Project).outerjoin(Plot).filter(or_(Sample.sample_id.ilike(f'%{q}%'), Sample.layer_id.ilike(f'%{q}%'), Project.project_code.ilike(f'%{q}%'), Experiment.experiment_code.ilike(f'%{q}%'), Plot.plot_code.ilike(f'%{q}%')))
-    items = query.order_by(Sample.id.desc()).all()
+        query = query.filter(
+            or_(
+                Sample.sample_id.ilike(f'%{q}%'),
+                Sample.layer_id.ilike(f'%{q}%'),
+                Sample.sampling_timepoint.ilike(f'%{q}%'),
+                Sample.clouds.ilike(f'%{q}%'),
+                Project.project_code.ilike(f'%{q}%'),
+                Experiment.experiment_code.ilike(f'%{q}%'),
+                Plot.plot_code.ilike(f'%{q}%')
+            )
+        )
+    items = query.order_by(Project.project_code, Experiment.experiment_code, Sample.sampling_date.desc()).all()
     return templates.TemplateResponse('samples/list.html', {'request': request, 'items': items, 'q': q})
 
 
@@ -467,13 +552,46 @@ def new_sample_form(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse('samples/form.html', {'request': request, 'item': None, 'experiments': experiments, 'plots': plots})
 
 
+# @app.post('/samples/new')
+# def create_sample(experiment_id: int = Form(...), plot_id: int | None = Form(None), sample_id: str = Form(...), layer_id: str = Form(''), sampling_date: str = Form(''), author: str = Form(''), db: Session = Depends(get_db)):
+#     db.add(Sample(experiment_id=experiment_id, plot_id=plot_id, sample_id=sample_id, layer_id=layer_id, sampling_date=parse_date(sampling_date), author=author))
+#     db.commit()
+#     return redirect('/samples')
+
 @app.post('/samples/new')
-def create_sample(experiment_id: int = Form(...), plot_id: int | None = Form(None), sample_id: str = Form(...), layer_id: str = Form(''), sampling_date: str = Form(''), author: str = Form(''), db: Session = Depends(get_db)):
-    db.add(Sample(experiment_id=experiment_id, plot_id=plot_id, sample_id=sample_id, layer_id=layer_id, sampling_date=parse_date(sampling_date), author=author))
+def create_sample(
+    experiment_id: int = Form(...),
+    plot_id: int | None = Form(None),
+    sample_id: str = Form(...),
+    sampling_timepoint: str = Form(''),
+    layer_id: str = Form(''),
+    depth_from_cm: int | None = Form(None),
+    depth_to_cm: int | None = Form(None),
+    sampling_date: str = Form(''),
+    author: str = Form(''),
+    clouds: str = Form(''),
+    temperature_band: str = Form(''),
+    rainfall_condition: str = Form(''),
+    db: Session = Depends(get_db)
+):
+    db.add(
+        Sample(
+            experiment_id=experiment_id,
+            plot_id=plot_id,
+            sample_id=sample_id,
+            sampling_timepoint=sampling_timepoint or None,
+            layer_id=layer_id,
+            depth_from_cm=depth_from_cm,
+            depth_to_cm=depth_to_cm,
+            sampling_date=parse_date(sampling_date),
+            author=author,
+            clouds=clouds or None,
+            temperature_band=temperature_band or None,
+            rainfall_condition=rainfall_condition or None
+        )
+    )
     db.commit()
     return redirect('/samples')
-
-
 @app.get('/samples/{item_id}/edit', response_class=HTMLResponse)
 def edit_sample_form(item_id: int, request: Request, db: Session = Depends(get_db)):
     item = db.get(Sample, item_id)
@@ -482,19 +600,50 @@ def edit_sample_form(item_id: int, request: Request, db: Session = Depends(get_d
     return templates.TemplateResponse('samples/form.html', {'request': request, 'item': item, 'experiments': experiments, 'plots': plots})
 
 
+# @app.post('/samples/{item_id}/edit')
+# def update_sample(item_id: int, experiment_id: int = Form(...), plot_id: int | None = Form(None), sample_id: str = Form(...), layer_id: str = Form(''), sampling_date: str = Form(''), author: str = Form(''), db: Session = Depends(get_db)):
+#     item = db.get(Sample, item_id)
+#     item.experiment_id = experiment_id
+#     item.plot_id = plot_id
+#     item.sample_id = sample_id
+#     item.layer_id = layer_id
+#     item.sampling_date = parse_date(sampling_date)
+#     item.author = author
+#     db.commit()
+#     return redirect('/samples')
+
 @app.post('/samples/{item_id}/edit')
-def update_sample(item_id: int, experiment_id: int = Form(...), plot_id: int | None = Form(None), sample_id: str = Form(...), layer_id: str = Form(''), sampling_date: str = Form(''), author: str = Form(''), db: Session = Depends(get_db)):
+def update_sample(
+    item_id: int,
+    experiment_id: int = Form(...),
+    plot_id: int | None = Form(None),
+    sample_id: str = Form(...),
+    sampling_timepoint: str = Form(''),
+    layer_id: str = Form(''),
+    depth_from_cm: int | None = Form(None),
+    depth_to_cm: int | None = Form(None),
+    sampling_date: str = Form(''),
+    author: str = Form(''),
+    clouds: str = Form(''),
+    temperature_band: str = Form(''),
+    rainfall_condition: str = Form(''),
+    db: Session = Depends(get_db)
+):
     item = db.get(Sample, item_id)
     item.experiment_id = experiment_id
     item.plot_id = plot_id
     item.sample_id = sample_id
+    item.sampling_timepoint = sampling_timepoint or None
     item.layer_id = layer_id
+    item.depth_from_cm = depth_from_cm
+    item.depth_to_cm = depth_to_cm
     item.sampling_date = parse_date(sampling_date)
     item.author = author
+    item.clouds = clouds or None
+    item.temperature_band = temperature_band or None
+    item.rainfall_condition = rainfall_condition or None
     db.commit()
     return redirect('/samples')
-
-
 @app.post('/samples/{item_id}/delete')
 def delete_sample(item_id: int, db: Session = Depends(get_db)):
     item = db.get(Sample, item_id)

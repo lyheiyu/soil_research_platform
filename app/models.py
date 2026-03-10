@@ -65,6 +65,21 @@ class Practice(Base):
     treatment = relationship('Treatment', back_populates='practices')
 
 
+# class Plot(Base):
+#     __tablename__ = 'plots'
+#     __table_args__ = (UniqueConstraint('experiment_id', 'plot_code', name='uq_experiment_plot_code'),)
+#
+#     id = Column(Integer, primary_key=True, index=True)
+#     experiment_id = Column(Integer, ForeignKey('experiments.id', ondelete='CASCADE'), nullable=False, index=True)
+#     treatment_id = Column(Integer, ForeignKey('treatments.id', ondelete='SET NULL'), nullable=True, index=True)
+#     plot_code = Column(String(50), nullable=False)
+#     replicate_no = Column(Integer)
+#     block_no = Column(Integer)
+#     sample_point = Column(String(100))
+#
+#     experiment = relationship('Experiment', back_populates='plots')
+#     treatment = relationship('Treatment', back_populates='plots')
+#     samples = relationship('Sample', back_populates='plot')
 class Plot(Base):
     __tablename__ = 'plots'
     __table_args__ = (UniqueConstraint('experiment_id', 'plot_code', name='uq_experiment_plot_code'),)
@@ -74,13 +89,13 @@ class Plot(Base):
     treatment_id = Column(Integer, ForeignKey('treatments.id', ondelete='SET NULL'), nullable=True, index=True)
     plot_code = Column(String(50), nullable=False)
     replicate_no = Column(Integer)
-    block_no = Column(Integer)
     sample_point = Column(String(100))
+    gps_lat = Column(Float)
+    gps_lon = Column(Float)
 
     experiment = relationship('Experiment', back_populates='plots')
     treatment = relationship('Treatment', back_populates='plots')
     samples = relationship('Sample', back_populates='plot')
-
 
 class Indicator(Base):
     __tablename__ = 'indicators'
@@ -94,7 +109,22 @@ class Indicator(Base):
 
     measurements = relationship('Measurement', back_populates='indicator')
 
-
+#
+# class Sample(Base):
+#     __tablename__ = 'samples'
+#     __table_args__ = (UniqueConstraint('experiment_id', 'sample_id', name='uq_experiment_sample_id'),)
+#
+#     id = Column(Integer, primary_key=True, index=True)
+#     experiment_id = Column(Integer, ForeignKey('experiments.id', ondelete='CASCADE'), nullable=False, index=True)
+#     plot_id = Column(Integer, ForeignKey('plots.id', ondelete='SET NULL'), nullable=True, index=True)
+#     sample_id = Column(String(100), nullable=False)
+#     layer_id = Column(String(50))
+#     sampling_date = Column(Date)
+#     author = Column(String(255))
+#
+#     experiment = relationship('Experiment', back_populates='samples')
+#     plot = relationship('Plot', back_populates='samples')
+#     measurements = relationship('Measurement', back_populates='sample', cascade='all, delete-orphan')
 class Sample(Base):
     __tablename__ = 'samples'
     __table_args__ = (UniqueConstraint('experiment_id', 'sample_id', name='uq_experiment_sample_id'),)
@@ -103,14 +133,22 @@ class Sample(Base):
     experiment_id = Column(Integer, ForeignKey('experiments.id', ondelete='CASCADE'), nullable=False, index=True)
     plot_id = Column(Integer, ForeignKey('plots.id', ondelete='SET NULL'), nullable=True, index=True)
     sample_id = Column(String(100), nullable=False)
+
+    sampling_timepoint = Column(String(10))   # T0 / T1 / T2
     layer_id = Column(String(50))
+    depth_from_cm = Column(Integer)
+    depth_to_cm = Column(Integer)
+
     sampling_date = Column(Date)
     author = Column(String(255))
+
+    clouds = Column(String(50))
+    temperature_band = Column(String(50))
+    rainfall_condition = Column(String(100))
 
     experiment = relationship('Experiment', back_populates='samples')
     plot = relationship('Plot', back_populates='samples')
     measurements = relationship('Measurement', back_populates='sample', cascade='all, delete-orphan')
-
 
 class Measurement(Base):
     __tablename__ = 'measurements'
